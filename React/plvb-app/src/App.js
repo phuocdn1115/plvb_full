@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react"
 import api from './api'
+import { toast } from 'react-toastify';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Login from './Login'
+import HomePage from "./Home";
 
 const App = () => {
   const [transactions, setTransactions] = useState([]);
@@ -23,64 +27,29 @@ const App = () => {
     });
   };
 
+
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    await api.post('/label/', formData);
-    fetchLabel();
+    const res = await api.post('/auth/token', formData);
     setFormData({
-      lable: '',
-      desc: ''
+      username: '',
+      password: ''
     });
+    if (res) {
+      toast('Login success', res.username)
+    }
   };
 
   return (
-    <div>
-      <nav className='navbar navbar-dark bg-primary'>
-        <div className='container-fluid'>
-          <a className='navbar-brand' href="#">
-            PLVB App
-          </a>
-        </div>
-      </nav>
-      <form>
-        <p class="text-start">Đăng nhập</p>
-        <div class="mb-2 row">
-          <label for="inputText" class="col-sm-1   col-form-label border">Username</label>
-          <div class="col-sm-2">
-            <input type="text" class="form-control" placeholder="Username" id="inputUsername" ></input>
-          </div>
-        </div>
-        <div class="mb-2 row">
-          <label for="inputPassword" class="col-sm-1 col-form-label border">Password</label>
-          <div class="col-sm-2">
-            <input type="password" class="form-control" id="inputPassword"></input>
-          </div>
-        </div>
-      </form>
-      <div >
-
-      </div>
-
-      {/* <table class="table table-striped">
-        <thead>
-          <tr>
-            <td>Label</td>
-            <td>Desc</td>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction.id}>
-              <td>{transaction.label}</td>
-              <td>{transaction.desc}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table> */}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/login' element={<Login />}></Route>
+        <Route path='/homepage' element={<HomePage />}></Route>
+      </Routes>
+    </BrowserRouter>
   )
 
 }
 
 export default App;
-
